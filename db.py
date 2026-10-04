@@ -19,7 +19,9 @@ def init_db():
         for row in csv.DictReader(database):
             conn.execute(
                 "INSERT OR REPLACE INTO appart values(?,?,?,?,?,?,?,?,?)",
-                (row["id"], row["title"], row["district"], row["metro"], row["rooms"], row["price"], row["area"], row["pets_allowed"], row["description"])
+                (row["id"], row["title"], row["district"], row["metro"],
+                 row["rooms"], row["price"], row["area"],
+                 row["pets_allowed"], row["description"])
             )
     conn.commit()
     conn.close()
