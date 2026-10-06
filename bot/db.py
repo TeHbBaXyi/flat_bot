@@ -1,6 +1,6 @@
 import csv, sqlite3
 def init_db():
-    conn = sqlite3.connect('flats.db')
+    conn = sqlite3.connect('../flats.db')
     conn.execute("""
                 CREATE TABLE IF NOT EXISTS appart
                 (
@@ -15,7 +15,7 @@ def init_db():
                     description TEXT
                 )
                 """)
-    with open("list_appart.csv", encoding="utf-8-sig") as database:
+    with open("../list_appart.csv", encoding="utf-8-sig") as database:
         for row in csv.DictReader(database):
             conn.execute(
                 "INSERT OR REPLACE INTO appart values(?,?,?,?,?,?,?,?,?)",
