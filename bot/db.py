@@ -15,7 +15,7 @@ def init_db():
                     description TEXT
                 )
                 """)
-    with open("../list_appart.csv", encoding="utf-8-sig") as database:
+    with open("list_appart.csv", encoding="utf-8-sig") as database:
         for row in csv.DictReader(database):
             conn.execute(
                 "INSERT OR REPLACE INTO appart values(?,?,?,?,?,?,?,?,?)",
