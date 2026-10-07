@@ -1,12 +1,29 @@
 import sqlite3
-def search(price_user=None, rooms_user=None, pets_allowed_user=None, metro_user=None,  area_user=None, district_user=None):
-    conn = sqlite3.connect('../flats.db')
+def search(price=None, rooms=None, pets_allowed=None, metro=None,  area=None, district=None):
+    conn = sqlite3.connect('flats.db')
 
-    res = conn.execute("SELECT price, district, metro, rooms, area, pets_allowed FROM appart WHERE price <= ?",
-                       (price_user,)).fetchall()
+    sql = "SELECT price, district, metro, rooms, area, pets_allowed FROM appart WHERE 1 = 1"
+    params = []
+    if price is not None:
+        sql += " AND price <= ?"
+        params.append(price)
+    if district is not None:
+        quantity = ", ".join("?" * len(district))
+        sql += f" AND district IN ({quantity})"
+        params.extend(district)
+    if rooms is not None:
+        sql += " AND rooms = ?"
+        params.append(rooms)
+    if metro is not None:
+        quantity = ", ".join("?" * len(metro))
+        sql += f" AND metro IN ({quantity})"
+        params.extend(metro)
+    if area is not None:
+        sql += " AND area >= ?"
+        params.append(area)
+    if pets_allowed == 1:
+        sql += " AND pets_allowed = 1"
+    res = conn.execute(sql, params).fetchall()
+
     conn.close()
     return res
-if __name__ == '__main__':
-    res = search(int(input("Укажите максимальную цену квартиры: ")))
-    for row in res:
-        print(f"Цена {row[0]} руб, район {row[1]}, метро {row[2]}, комнат {row[3]}, квартира {row[4]} кв метра, c животными {("можно" if row[5] == 1 else "нельзя")}")

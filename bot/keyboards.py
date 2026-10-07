@@ -18,10 +18,15 @@ filters = InlineKeyboardMarkup(inline_keyboard=[
 ])
 pets = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text="Да", callback_data="pets:1")],
-    [InlineKeyboardButton(text="Нет", callback_data="pets:0")]
+    [InlineKeyboardButton(text="Нет", callback_data="pets:0")],
+    [InlineKeyboardButton(text="Назад", callback_data="back:1")]
 ])
 rooms = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text="1", callback_data="rooms:1")],
     [InlineKeyboardButton(text="2", callback_data="rooms:2")],
-    [InlineKeyboardButton(text="3", callback_data="rooms:3")]
+    [InlineKeyboardButton(text="3", callback_data="rooms:3")],
+    [InlineKeyboardButton(text="Назад", callback_data="back:1")]
+])
+back = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text="Назад", callback_data="back:1")],
 ])
