@@ -30,3 +30,8 @@ rooms = InlineKeyboardMarkup(inline_keyboard=[
 back = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text="Назад", callback_data="back:1")],
 ])
+def more(offset):
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="Показать еще", callback_data=f"more:{offset}")],
+        [InlineKeyboardButton(text="Назад", callback_data="back:1")]
+    ])

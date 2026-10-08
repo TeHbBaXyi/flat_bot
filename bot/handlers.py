@@ -185,13 +185,49 @@ async def metro(message: Message, state: FSMContext):
 @router.callback_query(F.data == "filter:end")
 async def end(callback: CallbackQuery, state: FSMContext):
     data = await state.get_data()
+    if not data:
+        await callback.message.answer("Вы не выбрали ни одного фильтра",
+                                      reply_markup=kb.filters)
+        await callback.answer()
+        return
     final_res = search(**data)
     output_result = []
-    for row in final_res:
-        output_result.append(f"Цена {row[0]} руб, район {row[1]}, метро {row[2]}, комнат {row[3]}, квартира {row[4]} кв метра, "
-              f"c животными {("можно" if row[5] == 1 else "нельзя")}")
-    output_result = "\n".join(output_result)
-    await callback.message.answer(output_result)
+    offset = 5
+    if len(final_res) > 0:
+        for row in final_res[:offset]:
+            output_result.append(f"Цена {row[0]} руб\nрайон {row[1]} метро {row[2]}\nкомнат: {row[3]} квартира: {row[4]:g} м²\n"
+                f"c животными {("можно" if row[5] == 1 else "нельзя")}")
+        text = f"Показано {min(offset, len(final_res))} из {len(final_res)} квартир:\n" + "\n\n".join(output_result)
+        await callback.message.answer(text,
+                                      reply_markup=kb.more(offset) if offset < len(final_res) else kb.filters)
+        if len(final_res) <= offset:
+            await state.clear()
+        await callback.answer()
+    else:
+        await callback.message.answer("Ничего не найдено",
+                                  reply_markup=kb.filters)
+        await callback.answer()
+
+
+@router.callback_query(F.data.startswith("more:"))
+async def more(callback: CallbackQuery, state: FSMContext):
+    data = await state.get_data()
+    offset = int(callback.data.split(":")[1])
+    next_offset = offset + 5
+    final_res = search(**data)
+    output_result = []
+    for row in final_res[offset:next_offset]:
+        output_result.append(
+            f"Цена {row[0]} руб\nрайон {row[1]} метро {row[2]}\nкомнат: {row[3]} квартира: {row[4]:g} м²\n"
+            f"c животными {("можно" if row[5] == 1 else "нельзя")}")
+    text = f"Показано {min(next_offset, len(final_res))} из {len(final_res)} квартир:\n" + "\n\n".join(output_result)
+    await callback.message.answer(text,
+                                  reply_markup=kb.more(next_offset) if next_offset < len(final_res) else kb.filters)
+    if len(final_res) <= next_offset:
+        await state.clear()
+    await callback.answer()
+
+
 
 
 @router.callback_query(F.data == "back:1")
