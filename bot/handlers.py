@@ -3,9 +3,10 @@ from aiogram.filters import CommandStart
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
+from search import search
 import keyboards as kb
 import sqlite3
-from search import search
+
 
 class Order(StatesGroup):
     money = State()
@@ -99,8 +100,8 @@ async def district(message: Message, state: FSMContext):
     all_districts = {row[0] for row in conn.execute("SELECT DISTINCT district FROM appart")}
     conn.close()
 
-    found = [w for w in words if w in all_districts]
-    not_found = [w for w in words if w not in all_districts]
+    found = [word for word in words if word in all_districts]
+    not_found = [word for word in words if word not in all_districts]
 
     if not found:
         await message.answer("Таких районов нет в списке!!!")
@@ -108,18 +109,18 @@ async def district(message: Message, state: FSMContext):
         return
 
     data = await state.get_data()
-    old = data.get("district", [])
-    new = old + [d for d in found if d not in old]
-    await state.update_data(district=new)
+    old_dist = data.get("district", [])
+    new_dist = old_dist + [d for d in found if d not in old_dist]
+    await state.update_data(district=new_dist)
 
     if not_found:
         await message.answer(f"Не нашёл районы: {', '.join(not_found)}")
-        await message.answer(f"Сохранены районы: {', '.join(new)}")
+        await message.answer(f"Сохранены районы: {', '.join(new_dist)}")
         await message.answer("Можете ввести ещё районы или нажать «Назад»:", reply_markup=kb.back)
         return
 
     await state.set_state(None)
-    await message.answer(f"Сохранены районы: {', '.join(new)}")
+    await message.answer(f"Сохранены районы: {', '.join(new_dist)}")
     await message.answer("Выберите по чему будем фильтровать:", reply_markup=kb.filters)
 
 
@@ -158,8 +159,8 @@ async def metro(message: Message, state: FSMContext):
     all_metro = {row[0] for row in conn.execute("SELECT DISTINCT metro FROM appart")}
     conn.close()
 
-    found = [w for w in words if w in all_metro]
-    not_found = [w for w in words if w not in all_metro]
+    found = [word for word in words if word in all_metro]
+    not_found = [word for word in words if word not in all_metro]
 
     if not found:
         await message.answer("Таких станций нет в списке!!!")
@@ -167,18 +168,18 @@ async def metro(message: Message, state: FSMContext):
         return
 
     data = await state.get_data()
-    old = data.get("metro", [])
-    new = old + [m for m in found if m not in old]
-    await state.update_data(metro=new)
+    old_metro = data.get("metro", [])
+    new_metro = old_metro + [m for m in found if m not in old_metro]
+    await state.update_data(metro=new_metro)
 
     if not_found:
         await message.answer(f"Не нашёл станции: {', '.join(not_found)}")
-        await message.answer(f"Сохранены станции: {', '.join(new)}")
+        await message.answer(f"Сохранены станции: {', '.join(new_metro)}")
         await message.answer("Можете ввести ещё станции или нажать «Назад»:", reply_markup=kb.back)
         return
 
     await state.set_state(None)
-    await message.answer(f"Сохранены станции: {', '.join(new)}")
+    await message.answer(f"Сохранены станции: {', '.join(new_metro)}")
     await message.answer("Выберите по чему будем фильтровать:", reply_markup=kb.filters)
 
 
@@ -195,7 +196,7 @@ async def end(callback: CallbackQuery, state: FSMContext):
     offset = 5
     if len(final_res) > 0:
         for row in final_res[:offset]:
-            output_result.append(f"Цена {row[0]} руб\nрайон {row[1]} метро {row[2]}\nкомнат: {row[3]} квартира: {row[4]:g} м²\n"
+            output_result.append(f"Цена {row[0]} руб\nрайон: {row[1]} метро: {row[2]}\nкомнат: {row[3]} квартира: {row[4]:g} м²\n"
                 f"c животными {("можно" if row[5] == 1 else "нельзя")}")
         text = f"Показано {min(offset, len(final_res))} из {len(final_res)} квартир:\n" + "\n\n".join(output_result)
         await callback.message.answer(text,
@@ -218,7 +219,7 @@ async def more(callback: CallbackQuery, state: FSMContext):
     output_result = []
     for row in final_res[offset:next_offset]:
         output_result.append(
-            f"Цена {row[0]} руб\nрайон {row[1]} метро {row[2]}\nкомнат: {row[3]} квартира: {row[4]:g} м²\n"
+            f"Цена {row[0]} руб\nрайон: {row[1]} метро: {row[2]}\nкомнат: {row[3]} квартира: {row[4]:g} м²\n"
             f"c животными {("можно" if row[5] == 1 else "нельзя")}")
     text = f"Показано {min(next_offset, len(final_res))} из {len(final_res)} квартир:\n" + "\n\n".join(output_result)
     await callback.message.answer(text,
