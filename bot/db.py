@@ -16,7 +16,6 @@ def connect_db():
     return conn
 
 def init_db():
-    load_dotenv()
     with connect_db() as conn:
         conn.execute("""
             CREATE TABLE IF NOT EXISTS appart

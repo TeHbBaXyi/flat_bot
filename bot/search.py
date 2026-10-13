@@ -9,7 +9,7 @@ def search(price=None, rooms=None, pets_allowed=None, metro=None,  area=None, di
             sql += " AND price <= %s"
             params.append(price)
         if district is not None:
-            quantity = ", ".join("%s" * len(district))
+            quantity = ", ".join(["%s"] * len(district))
             sql += f" AND district IN ({quantity})"
             params.extend(district)
         if rooms is not None:

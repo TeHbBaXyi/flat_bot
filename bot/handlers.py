@@ -6,6 +6,7 @@ from aiogram.fsm.state import State, StatesGroup
 from search import search
 import keyboards as kb
 import sqlite3
+from db import connect_db
 
 
 class Order(StatesGroup):
@@ -13,6 +14,8 @@ class Order(StatesGroup):
     district = State()
     metro = State()
     area = State()
+
+
 router = Router()
 
 
@@ -96,9 +99,9 @@ async def what_district(callback: CallbackQuery, state: FSMContext):
 @router.message(Order.district)
 async def district(message: Message, state: FSMContext):
     words = message.text.replace(",", " ").split()
-    conn = sqlite3.connect('flats.db')
-    all_districts = {row[0] for row in conn.execute("SELECT DISTINCT district FROM appart")}
-    conn.close()
+    with connect_db() as conn:
+        all_districts = {row[0] for row in conn.execute("SELECT DISTINCT district FROM appart")}
+
 
     found = [word for word in words if word in all_districts]
     not_found = [word for word in words if word not in all_districts]
@@ -155,9 +158,9 @@ async def what_metro(callback: CallbackQuery, state: FSMContext):
 @router.message(Order.metro)
 async def metro(message: Message, state: FSMContext):
     words = message.text.replace(",", " ").split()
-    conn = sqlite3.connect('flats.db')
-    all_metro = {row[0] for row in conn.execute("SELECT DISTINCT metro FROM appart")}
-    conn.close()
+    with connect_db() as conn:
+        all_metro = {row[0] for row in conn.execute("SELECT DISTINCT metro FROM appart")}
+
 
     found = [word for word in words if word in all_metro]
     not_found = [word for word in words if word not in all_metro]
