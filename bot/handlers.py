@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from search import search
 import keyboards as kb
-import sqlite3
+
 from db import connect_db
 
 

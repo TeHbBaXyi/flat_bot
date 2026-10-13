@@ -16,7 +16,7 @@ def search(price=None, rooms=None, pets_allowed=None, metro=None,  area=None, di
             sql += " AND rooms = %s"
             params.append(rooms)
         if metro is not None:
-            quantity = ", ".join("%s" * len(metro))
+            quantity = ", ".join(["%s"] * len(metro))
             sql += f" AND metro IN ({quantity})"
             params.extend(metro)
         if area is not None:
