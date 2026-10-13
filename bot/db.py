@@ -1,11 +1,19 @@
-import csv, os
 from pathlib import Path
-
-import psycopg
 from dotenv import load_dotenv
+import csv, os, psycopg
 
 CSV_PATH = Path(__file__).parent / "list_appart.csv"
 
+def connect_db():
+    load_dotenv()
+    conn = psycopg.connect(
+        host=os.getenv("DB_HOST"),
+        port=os.getenv("DB_PORT"),
+        password=os.getenv("DB_PASSWORD"),
+        dbname=os.getenv("DB_DATABASE"),
+        user=os.getenv("DB_USER")
+    )
+    return conn
 
 def init_db():
     load_dotenv()
