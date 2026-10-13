@@ -17,13 +17,7 @@ def connect_db():
 
 def init_db():
     load_dotenv()
-    with psycopg.connect(
-            host=os.getenv("DB_HOST"),
-            port=os.getenv("DB_PORT"),
-            password=os.getenv("DB_PASSWORD"),
-            dbname=os.getenv("DB_DATABASE"),
-            user=os.getenv("DB_USER"),
-    ) as conn:
+    with connect_db() as conn:
         conn.execute("""
             CREATE TABLE IF NOT EXISTS appart
             (
@@ -55,5 +49,7 @@ def init_db():
                 """, (row["id"], row["title"], row["district"], row["metro"],
                       row["rooms"], row["price"], row["area"],
                       row["pets_allowed"], row["description"]))
+
+
 if __name__ == "__main__":
     init_db()
