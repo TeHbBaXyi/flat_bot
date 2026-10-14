@@ -1,5 +1,6 @@
 import pytest
 from search import search
+from db import connect_db
 
 def test_search_rooms():
     test_res = search(rooms=2)
@@ -43,5 +44,7 @@ def test_search_metro():
         assert apartment[2] in metro
 
 def test_search():
-    test_res = search()
-    assert len(test_res) == len(search())
+    with connect_db():
+        sql_list = "SELECT * FROM apartments"
+        test_res = search()
+        assert len(test_res) == len(sql_list)
