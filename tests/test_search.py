@@ -53,5 +53,13 @@ def test_search():
 def test_search_district_not_found():
     district = ["abc"]
     test_res = search(district=district)
+    assert len(test_res) == 0
+
+
+def test_search_rooms_and_price():
+    test_res = search(rooms=2, price=76000)
     if not test_res:
-        assert len(test_res) == 0
+        pytest.fail("Список пуст")
+    for apartment in test_res:
+        assert apartment[0] <= 76000
+        assert apartment[3] == 2
