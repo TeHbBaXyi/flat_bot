@@ -44,7 +44,14 @@ def test_search_metro():
         assert apartment[2] in metro
 
 def test_search():
-    with connect_db():
-        sql_list = "SELECT * FROM apartments"
-        test_res = search()
-        assert len(test_res) == len(sql_list)
+    with connect_db() as conn:
+        sql_list = conn.execute("SELECT * FROM appart").fetchall()
+    test_res = search()
+    assert len(test_res) == len(sql_list)
+
+
+def test_search_district_not_found():
+    district = ["abc"]
+    test_res = search(district=district)
+    if not test_res:
+        assert len(test_res) == 0
